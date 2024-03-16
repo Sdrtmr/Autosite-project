@@ -52,11 +52,6 @@ def generate_html_with_form(title):
             <a href="#" onclick="document.getElementById('popup').style.display='block';">О нас</a>
             <a href="#">Корзина</a>
         </div>
-        <div style="margin-top: 20px;">
-            <form action="#" method="POST">
-                <label for="input_data">Введите данные на русском:</label><br>
-                <input type="text" id="input_data" name="input_data" style="width: 300px;"><br><br>
-                <input type="submit" value="Отправить">
             </form>
         </div>
         <div class="popup" id="popup" onclick="this.style.display='none';">

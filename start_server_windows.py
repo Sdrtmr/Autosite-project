@@ -12,10 +12,14 @@ def generate_html_with_form(title):
                 background-color: #333; /* Тёмно-серый цвет фона */
                 color: #fff; /* Цвет текста */
             }}
-            h1 {{
-                background-color: #fff; /* Белый цвет фона для заголовка */
+            h1, .catalog-title {{
+                background-color: white; /* Белый цвет фона для заголовка */
                 color: black; /* Черный цвет текста для заголовка */
                 padding: 10px;
+                text-align: center; /* Выравниваем заголовок по центру */
+            }}
+            .catalog-title {{
+                text-align: left; /* Выравниваем заголовок влево */
             }}
             a {{
                 color: white; /* Белый цвет текста для кнопок */
@@ -44,10 +48,15 @@ def generate_html_with_form(title):
         <h1 style="text-align:center;">{title}</h1>
         <div class="button-container">
             <a href="#">Главная</a>
-            <a href="#">Каталог</a>
+            <a href="/catalog">Каталог</a>
             <a href="#" onclick="document.getElementById('popup').style.display='block';">О нас</a>
             <a href="#">Корзина</a>
         </div>
+        <div style="margin-top: 20px;">
+            <form action="#" method="POST">
+                <label for="input_data">Введите данные на русском:</label><br>
+                <input type="text" id="input_data" name="input_data" style="width: 300px;"><br><br>
+                <input type="submit" value="Отправить">
             </form>
         </div>
         <div class="popup" id="popup" onclick="this.style.display='none';">
@@ -55,6 +64,33 @@ def generate_html_with_form(title):
             Наш автосалон предлагает широкий выбор автомобилей под любые ваши нужды.<br>
             Мы постарались сделать интернет-магазин наиболее удобным, чтобы вы могли найти подходящий лично вам автомобиль.</p>
         </div>
+    </body>
+    </html>
+    """
+
+# Функция для генерации HTML кода для страницы с товарами
+def generate_catalog_page():
+    return """
+    <html>
+    <head>
+        <title>Каталог</title>
+        <meta charset="utf-8">
+        <style>
+            body {
+                background-color: #333; /* Тёмно-серый цвет фона */
+                color: white; /* Цвет текста */
+            }
+            .catalog-title {
+                background-color: white; /* Белый цвет фона для заголовка */
+                color: black; /* Черный цвет текста для заголовка */
+                padding: 10px;
+                text-align: left; /* Выравниваем заголовок влево */
+            }
+        </style>
+    </head>
+    <body>
+        <h1 class="catalog-title">Товары</h1>
+        <p>Здесь можете разместить информацию о товарах.</p>
     </body>
     </html>
     """
@@ -67,8 +103,18 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html; charset=utf-8')  # Указываем тип контента как HTML с кодировкой UTF-8
         self.end_headers()
         
-        # Генерируем HTML-код с заголовком, кнопками и формой для ввода
-        content = generate_html_with_form("Autosite-Cadia")
+        if self.path == '/':  # Если запрошен корневой путь, отображаем основную страницу
+            content = generate_html_with_form("Autosite-Cadia")
+        elif self.path == '/home':  # Если запрошен путь /home, отображаем страницу "Главная"
+            self.send_response(301)
+            self.send_header('Location', '/')
+            self.end_headers()
+            return
+        elif self.path == '/catalog':  # Если запрошен путь /catalog, отображаем страницу с товарами
+            content = generate_catalog_page()
+        else:
+            self.send_error(404, "Страница не найдена")
+            return
         
         self.wfile.write(content.encode('utf-8'))  # Отправляем HTML содержимое на страницу с указанием кодировки
 

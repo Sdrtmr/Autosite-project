@@ -1,65 +1,148 @@
-import tkinter as tk
-from tkinter import simpledialog
+import psycopg2
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
-def login():
-    print("Вы выбрали вход.")
+# Функция для установки соединения с базой данных
+def connect_to_database():
+    conn = psycopg2.connect(
+        dbname="database123",
+        user="postgres",
+        password="Max75mx",
+        host="localhost",
+        port="5432"
+    )
+    return conn
 
-def register():
-    print("Вы выбрали регистрацию.")
+# Функция для выполнения SQL запросов к базе данных
+def execute_query(query):
+    conn = connect_to_database()
+    cur = conn.cursor()
+    cur.execute(query)
+    conn.commit()
+    result = cur.fetchall()
+    conn.close()
+    return result
 
-def open_car_catalog():
-    print("Вы переходите в каталог автомобилей.")
+# Функция для генерации HTML кода с заголовком, кнопками и формой для ввода
+def generate_html_with_form(title):
+    return f"""
+    <html>
+    <head>
+        <title>{title}</title>
+        <meta charset="utf-8">
+        <style>
+            body {{
+                background-color: #333; /* Тёмно-серый цвет фона */
+                color: #fff; /* Цвет текста */
+            }}
+            h1, .catalog-title {{
+                background-color: white; /* Белый цвет фона для заголовка */
+                color: black; /* Черный цвет текста для заголовка */
+                padding: 10px;
+                text-align: center; /* Выравниваем заголовок по центру */
+            }}
+            .catalog-title {{
+                text-align: left; /* Выравниваем заголовок влево */
+            }}
+            a {{
+                color: white; /* Белый цвет текста для кнопок */
+                text-decoration: none; /* Убираем подчеркивание у ссылок */
+                margin-right: 0.5cm; /* Отступ между кнопками - 0.5 см */
+            }}
+            .button-container {{
+                text-align: center; /* Центрируем элементы внутри div по горизонтали */
+            }}
+            .popup {{
+                display: none;
+                position: fixed;
+                width: 80%;
+                height: 80%;
+                top: 10%;
+                left: 10%;
+                background-color: #001f3f; /* Тёмно-синий цвет фона для всплывающего окна */
+                color: white; /* Белый цвет текста во всплывающем окне */
+                padding: 20px;
+                z-index: 9999;
+                font-size: 12pt; /* Размер шрифта 12 пунктов */
+            }}
+        </style>
+    </head>
+    <body style="text-align:center;">
+        <h1 style="text-align:center;">{title}</h1>
+        <div class="button-container">
+            <a href="#">Главная</a>
+            <a href="/catalog">Каталог</a>
+            <a href="#" onclick="document.getElementById('popup').style.display='block';">О нас</a>
+            <a href="#">Корзина</a>
+        </div>
+            </form>
+        </div>
+        <div class="popup" id="popup" onclick="this.style.display='none';">
+            <p>Здравствуйте! Данный сайт является официальным интернет-магазином автосалона Cadia.<br>
+            Наш автосалон предлагает широкий выбор автомобилей под любые ваши нужды.<br>
+            Мы постарались сделать интернет-магазин наиболее удобным, чтобы вы могли найти подходящий лично вам автомобиль.</p>
+        </div>
+    </body>
+    </html>
+    """
 
-# Создание главного окна
-root = tk.Tk()
-root.title("Автосалон")
+# Функция для генерации HTML кода для страницы с товарами
+def generate_catalog_page():
+    return """
+    <html>
+    <head>
+        <title>Каталог</title>
+        <meta charset="utf-8">
+        <style>
+            body {
+                background-color: #333; /* Тёмно-серый цвет фона */
+                color: white; /* Цвет текста */
+            }
+            .catalog-title {
+                background-color: white; /* Белый цвет фона для заголовка */
+                color: black; /* Черный цвет текста для заголовка */
+                padding: 10px;
+                text-align: left; /* Выравниваем заголовок влево */
+            }
+        </style>
+    </head>
+    <body>
+        <h1 class="catalog-title">Товары</h1>
+        <p>Здесь можете разместить информацию о товарах.</p>
+    </body>
+    </html>
+    """
 
-# Лейбл с приветственным сообщением
-label = tk.Label(root, text="Добро пожаловать!")
-label.pack()
-
-# Кнопка для регистрации
-register_button = tk.Button(root, text="Зарегистрироваться", command=register)
-def show_catalog_window():
-    root = tk.Tk()
-
-    label_catalog = tk.Label(root, text="Каталог автомобилей")
-    label_catalog.pack()
-
-    root.mainloop()
-
-def show_registration_window():
-    
-    def submit():
-        username = entry_username.get()
-        password = entry_password.get()
-        if username == "admin" and password == "password":
-            print("Successfully logged in")
-            root.destroy()
-            show_catalog_window()
+# Создаем класс, унаследованный от BaseHTTPRequestHandler
+class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+    # Определяем метод для обработки GET запросов
+    def do_GET(self):
+        self.send_response(200)  # Отправляем код успешного ответа
+        self.send_header('Content-type', 'text/html; charset=utf-8')  # Указываем тип контента как HTML с кодировкой UTF-8
+        self.end_headers()
+        
+        if self.path == '/':  # Если запрошен корневой путь, отображаем основную страницу
+            content = generate_html_with_form("Autosite-Cadia")
+        elif self.path == '/home':  # Если запрошен путь /home, отображаем страницу "Главная"
+            self.send_response(301)
+            self.send_header('Location', '/')
+            self.end_headers()
+            return
+        elif self.path == '/catalog':  # Если запрошен путь /catalog, отображаем страницу с товарами
+            content = generate_catalog_page()
         else:
-            label_error.config(text="Неправильный логин или пароль!")
+            self.send_error(404, "Страница не найдена")
+            return
+        
+        self.wfile.write(content.encode('utf-8'))  # Отправляем HTML содержимое на страницу с указанием кодировки
 
-    label_username = tk.Label(root, text="Логин:")
-    label_username.pack()
-    entry_username = tk.Entry(root)
-    entry_username.pack()
+# Определяем IP адрес и порт сервера
+server_address = ('127.0.0.5', 9000)
 
-    label_password = tk.Label(root, text="Пароль:")
-    label_password.pack()
-    entry_password = tk.Entry(root, show="*")
-    entry_password.pack()
+# Создаем экземпляр HTTP сервера с заданным IP адресом и портом
+httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
 
-    button_submit = tk.Button(root, text="Войти", command=submit)
-    button_submit.pack()
+# Выводим информацию о запуске сервера
+print("Starting server on http://{}:{}".format(server_address[0], server_address[1]) + " ...")
 
-    label_error = tk.Label(root, text="", fg="red")
-    label_error.pack()
-
-show_registration_window()
-
-# Кнопка для выхода
-exit_button = tk.Button(root, text="Выход", command=root.destroy)
-exit_button.pack()
-
-root.mainloop()
+# Запускаем сервер и оставляем его работать в цикле
+httpd.serve_forever()

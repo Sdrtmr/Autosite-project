@@ -4,9 +4,9 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 # Функция для установки соединения с базой данных
 def connect_to_database():
     conn = psycopg2.connect(
-        dbname="database123",
+        dbname="Название",
         user="postgres",
-        password="Max75mx",
+        password="Пароль",
         host="localhost",
         port="5432"
     )

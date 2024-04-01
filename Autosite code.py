@@ -1,26 +1,11 @@
 import psycopg2
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from flask import Flask
+import psycopg2
 
-# Функция для установки соединения с базой данных
-def connect_to_database():
-    conn = psycopg2.connect(
-        dbname="Название",
-        user="postgres",
-        password="Пароль",
-        host="localhost",
-        port="5432"
-    )
-    return conn
+from app import connect_to_db
 
-# Функция для выполнения SQL запросов к базе данных
-def execute_query(query):
-    conn = connect_to_database()
-    cur = conn.cursor()
-    cur.execute(query)
-    conn.commit()
-    result = cur.fetchall()
-    conn.close()
-    return result
+app = Flask(__name__)
 
 # Функция для генерации HTML кода с заголовком, кнопками и формой для ввода
 def generate_html_with_form(title):
@@ -89,6 +74,7 @@ def generate_html_with_form(title):
 def generate_catalog_page():
     return """
     <html>
+    <html>
     <head>
         <title>Каталог</title>
         <meta charset="utf-8">
@@ -107,11 +93,86 @@ def generate_catalog_page():
     </head>
     <body>
         <h1 class="catalog-title">Товары</h1>
-        <p>Здесь можете разместить информацию о товарах.</p>
+        <p>Вот что мы можем вам предложить.</p>
     </body>
-    </html>
+</style>
+</head>
+<body>
+    <div class="row">
+        <h1>Товары в наличии</h1>
+        <p>Выбранный товар</p>
+<div class="col-md-4">
+    <div class="product">
+        <img src="Cars/car-1.png">
+        <div class="product_info">
+            <h3>Модель: AUDI A4</h3>
+            <p>Цена: 33 178 - 44 707 USD</p>
+            <a href="#Mymodal{{product[1]}}" class="click_to_button">Добавить в корзину</a>
+        </div>
+    </div>
+</div>
+<!-- Создаём модальное окно для оформления заказа! -->
+<div id="Mymodal{{ product[0] }}" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="orderModalLabel">Оформление заказа</h5>
+            <a href="#" class="close">&times;</a>
+        </div>
+        <div class="modal-body">
+            <form id="orderForm" action="/submit_order" method="POST">
+                <input type="hidden" name="productId" value="{{ product[0] }}">
+                <div class="form-group">
+                    <label for="phoneNumber">Телефон</label>
+                    <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Завершить оформление заказа</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
+<html>
     """
 
+# Функция для установки соединения с базой данных
+def connect_to_database():
+    conn = psycopg2.connect(
+        dbname="Autosite-base",
+        user="postgres",
+        password="Пароль",
+        host="localhost",
+        port="5432"
+    )
+    return conn
+
+# Функция для получения данных  о продуктах из базы данных PostgreSQL
+def get_products_from_db():
+    conn = connect_to_db()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM products")
+            products = cur.fetchall()
+            cur.close()
+            conn.close()
+            return products
+        except psycopg2.Error as e:
+           print("Error fetching data from PostgreSQL", e)
+        return []
+    else: 
+       return []
+    
+# Функция для выполнения SQL запросов к базе данных
+def execute_query(query):
+    conn = connect_to_database()
+    cur = conn.cursor()
+    cur.execute(query)
+    conn.commit()
+    result = cur.fetchall()
+    conn.close()
+    return result
 # Создаем класс, унаследованный от BaseHTTPRequestHandler
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     # Определяем метод для обработки GET запросов

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Автосалон</title>
+  <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <img src="sitelogo.png" alt="Логотип" class="logo"> 
+      <h1 style="color: white;">Автосалон Cadia</h1> 
+      <nav>
+        <ul>
+          <li><button onclick="openCatalog()">Каталог</button></li> 
+          <li><button onclick="openContacts()">Контакты</button></li>
+          <li><button onclick="openAbout_us()">О нас</button></li>
+        </ul>
+      </nav> 
+    </div>
+  </header>
+
+  <a href="map/ismap.php">
+  </a>
+  <meta charset="utf-8"> 
+     
+  <main>
+    <h2>Добро пожаловать в наш автосалон!</h2>
+    <p>У нас вы найдете широкий выбор автомобилей по выгодным ценам.</p>
+  </main>
+
+  <footer>
+    <p>&copy; 2024 Автосалон "Cadia"</p>
+  </footer>
+  
+  <script>
+    function openCatalog() {
+      window.open("products.html", "_blank"); 
+    }
+  </script>
+
+<script>
+  function openContacts() {
+    window.open("contacts.html", "_blank")
+  }
+</script>
+
+<script>
+  function openAbout_us() {
+    window.open("about_us.html", "_blank"); 
+  }
+</script>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+  }
+
+  header {
+    background-color: #333; /* Тёмно-серый цвет фона */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+  }
+
+  .logo {
+    margin-right: 20px; 
+  }
+
+  h1 {
+    color: white; /* Белый текст заголовка */
+  }
+</style>
+</body>
+</html>
+

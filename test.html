@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Оформление заказа</title>
+<style>
+  body {
+    font-family: sans-serif;
+    background-color: #333; /* Тёмно-серый фон */
+    color: #eee; /* Светлый цвет текста */
+  }
+  #order-form {
+    width: 300px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #444; /* Чуть светлее фона */
+  }
+  #order-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    background-color: #555; /* Еще светлее */
+    color: #eee; /* Светлый цвет текста */
+  }
+  #order-form button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+  <div id="order-form">
+    <h2>Оформление заказа</h2>
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="phone">Номер телефона:</label>
+    <input type="tel" id="phone" name="phone" required>
+    <button id="submit-order">Завершить оформление заказа</button>
+  </div>
+
+  <script>
+    const submitButton = document.getElementById('submit-order');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+
+    submitButton.addEventListener('click', function() {
+      const email = emailInput.value;
+      const phone = phoneInput.value;
+
+      // Проверка ввода (добавьте свои правила валидации)
+      if (!email || !phone) {
+        alert("Пожалуйста, введите email и номер телефона.");
+        return;
+      }
+
+      // Вывод сообщения подтверждения (добавьте свои сообщения)
+      if (confirm(`Вы уверены, что хотите оформить заказ?\nEmail: ${email}\nТелефон: ${phone}`)) {
+        // Отправьте заказ на сервер (если необходимо)
+
+        // Откройте файл подтверждения (замените на ваш URL)
+        window.open("success_order.html");
+
+        // Очистите поля ввода
+        emailInput.value = '';
+        phoneInput.value = '';
+      }
+    });
+  </script>
+</body>
+</html>

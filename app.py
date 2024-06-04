@@ -7,9 +7,9 @@ app = Flask(__name__)
 def connect_to_db():
                  
        conn = psycopg2.connect(
-        dbname="название",
+        dbname="Autosite-base",
         user="postgres",
-        password="пароль",
+        password="Max75mx",
         host="localhost",
         port=5432
         )

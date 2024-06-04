@@ -1,0 +1,32 @@
+body {
+    background-color: #333; /* Тёмно-серый цвет фона */
+    color: white; /* Цвет текста */
+}
+.catalog-title {
+    background-color: white; /* Белый цвет фона для заголовка */
+    color: black; /* Черный цвет текста для заголовка */
+    padding: 10px;
+    text-align: left; /* Выравниваем заголовок влево */
+}
+.contacts-title {
+    background-color: white; /* Белый цвет фона для заголовка */
+    color: black; /* Черный цвет текста для заголовка */
+    padding: 10px;
+    text-align: left; /* Выравниваем заголовок влево */
+
+}
+.about_us-title {
+    background-color: white; /* Белый цвет фона для заголовка */
+    color: black; /* Черный цвет текста для заголовка */
+    padding: 10px;
+    text-align: left; /* Выравниваем заголовок влево */
+
+}
+
+.Bascet-title {
+    background-color: white; /* Белый цвет фона для заголовка */
+    color: black; /* Черный цвет текста для заголовка */
+    padding: 10px;
+    text-align: left; /* Выравниваем заголовок влево */
+    
+            }
